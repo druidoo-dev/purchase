@@ -1,7 +1,3 @@
-##############################################################################
-# For copyright and license notices, see __manifest__.py file in module root
-# directory
-##############################################################################
 from odoo import models, fields, api, _
 from openerp.osv.orm import setup_modifiers
 from lxml import etree
@@ -64,7 +60,6 @@ class ProductProduct(models.Model):
             "view_mode": 'form',
             'res_model': 'product.product',
             'type': 'ir.actions.act_window',
-            # 'domain': [('id', 'in', self.apps_product_ids.ids)],
             'res_id': self.id,
             'view_id': view_id,
         }
@@ -75,7 +70,7 @@ class ProductProduct(models.Model):
     def fields_view_get(self, view_id=None, view_type='form',
                         toolbar=False, submenu=False):
         """
-        If we came from sale order, we send in context 'force_product_edit'
+        If we came from purchase order, we send in context 'force_product_edit'
         and we change tree view to make editable and also field qty
         """
         res = super(ProductProduct, self).fields_view_get(

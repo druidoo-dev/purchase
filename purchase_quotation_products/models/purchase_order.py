@@ -11,38 +11,31 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def add_products_to_quotation(self):
-        """ In order to filter the products of the partner the "product supplier
-        search" module need to be installed
-        """
         self.ensure_one()
-        action_read = False
-        actions = self.env.ref(
-            'product.product_normal_action_sell')
-        if actions:
-            action_read = actions.read()[0]
-            context = literal_eval(action_read['context'])
-            if 'search_default_filter_to_sell' in context:
-                context.pop('search_default_filter_to_sell')
-            context.update(dict(
-                search_default_filter_to_purchase=True,
-                search_default_seller_ids=self.partner_id.name,
-                purchase_quotation_products=True,
-                # we send company in context so it filters taxes
-                company_id=self.company_id.id,
-                # pricelist=self.pricelist_id.display_name,
-                partner_id=self.partner_id.id,
-            ))
-            action_read.update(dict(
-                context=context,
-                name=_('Quotation Products'),
-                display_name=_('Quotation Products'),
-            ))
-        return action_read
+        action = self.env.ref('product.product_normal_action_sell').read()[0]
+        context = literal_eval(action['context'])
+        if 'search_default_filter_to_sell' in context:
+            context.pop('search_default_filter_to_sell')
+        context.update({
+            'search_default_filter_to_purchase': True,
+            'search_default_seller_ids': self.partner_id.name,
+            'purchase_quotation_products': True,
+            # we send company in context so it filters taxes
+            'company_id': self.company_id.id,
+            # pricelist=self.pricelist_id.display_name,
+            'partner_id': self.partner_id.id,
+        })
+        action.update({
+            'context': context,
+            'name': _('Quotation Products'),
+            'display_name': _('Quotation Products'),
+        })
+        return action
 
     @api.multi
     def add_products(self, product, qty):
-        """This method create line in cache to prepare the order line that
-        it's added to purchase order
+        """ Creates line in cache to prepare the order line 
+        that is added to purchase order
         """
         self.ensure_one()
         vals = {
