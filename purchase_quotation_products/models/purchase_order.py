@@ -12,17 +12,14 @@ class PurchaseOrder(models.Model):
     @api.multi
     def add_products_to_quotation(self):
         self.ensure_one()
-        action = self.env.ref('product.product_normal_action_sell').read()[0]
+        action = self.env.ref('purchase.product_product_action').read()[0]
         context = literal_eval(action['context'])
-        if 'search_default_filter_to_sell' in context:
-            context.pop('search_default_filter_to_sell')
         context.update({
-            'search_default_filter_to_purchase': True,
             'search_default_seller_ids': self.partner_id.name,
             'purchase_quotation_products': True,
             # we send company in context so it filters taxes
             'company_id': self.company_id.id,
-            # pricelist=self.pricelist_id.display_name,
+            # we send partner to compute prices
             'partner_id': self.partner_id.id,
         })
         action.update({

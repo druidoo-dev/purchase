@@ -16,7 +16,7 @@ class ProductProduct(models.Model):
     @api.multi
     def _compute_qty_purchase(self):
         purchase_order_id = self._context.get('active_id', False)
-        ProductUom = self.env['product.uom']
+        ProductUom = self.env['uom.uom']
         if not purchase_order_id:
             self.update({'qty_purchase': 0})
             return

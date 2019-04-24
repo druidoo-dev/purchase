@@ -8,10 +8,21 @@
             <field name="order_line" position="before">
                 <button name="add_products_to_quotation" type="object" string="Search Products" states="draft,sent"/>
             </field>
-            <!-- campo date no requerido para que no haga falta crear una línea y se pueda ir a agregar productos directamente -->
+            <!-- Without this change, the price calculation doesn't work -->
             <xpath expr='//page[2]//field[@name="date_planned"]' position='attributes'>
                 <attribute name="required">0</attribute>
             </xpath>
         </field>
     </record>
+
+    <record id="product_search_form_view" model="ir.ui.view">
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">
+            <field name="categ_id" position="after">
+                <field name="seller_ids"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
